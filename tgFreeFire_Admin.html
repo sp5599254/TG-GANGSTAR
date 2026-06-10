@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Admin Panel</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#FFD700;--gold2:#FF6B00;--gold-glow:rgba(255,215,0,0.15);
+  --bg:#07080E;--bg2:#0D0F18;--bg3:#141820;
+  --card:#111520;--card2:#1A1F2E;
+  --red:#FF3B3B;--green:#00E676;--blue:#00B4FF;
+  --text:#FFFFFF;--text2:#8A95B0;--text3:#454F6B;
+  --border:rgba(255,255,255,0.07);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;min-height:100vh;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:var(--gold);border-radius:10px;}
+
+/* AUTH */
+#auth-screen{position:fixed;inset:0;z-index:9000;background:linear-gradient(160deg,#0a0010,#07080E);display:flex;align-items:center;justify-content:center;padding:24px;}
+.auth-box{background:var(--card);border:1px solid rgba(255,215,0,0.12);border-radius:24px;padding:32px 26px;width:100%;max-width:380px;text-align:center;}
+.auth-icon{width:70px;height:70px;background:linear-gradient(135deg,#FF6B00,#FFD700);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 14px;box-shadow:0 0 30px rgba(255,107,0,0.4);}
+.auth-title{font-family:'Rajdhani',sans-serif;font-size:1.6rem;font-weight:700;color:var(--gold);margin-bottom:4px;letter-spacing:1px;}
+.auth-sub{font-size:0.8rem;color:var(--text3);margin-bottom:24px;}
+.inp-wrap{position:relative;margin-bottom:11px;}
+.inp-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:0.9rem;}
+.inp{width:100%;background:var(--bg3);border:1.5px solid var(--border);color:var(--text);padding:13px 13px 13px 42px;border-radius:13px;font-size:0.93rem;outline:none;font-family:'Poppins',sans-serif;transition:border-color 0.2s;}
+.inp::placeholder{color:var(--text3);}
+.inp:focus{border-color:rgba(255,215,0,0.35);}
+.btn-ff{background:linear-gradient(135deg,#FF6B00,#FFD700);color:#000;font-weight:700;border:none;border-radius:13px;padding:15px;width:100%;font-size:1rem;cursor:pointer;font-family:'Poppins',sans-serif;transition:transform 0.15s;}
+.btn-ff:active{transform:scale(0.97);}
+
+/* LAYOUT */
+#admin-app{display:none;}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:230px;background:var(--card);border-right:1px solid var(--border);z-index:100;overflow-y:auto;transition:transform 0.3s;}
+.sidebar-logo{padding:18px 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.sb-logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#FF6B00,#FFD700);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;overflow:hidden;flex-shrink:0;}
+.sb-logo-icon img{width:100%;height:100%;object-fit:cover;}
+.sb-logo-text{font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;color:var(--gold);letter-spacing:0.5px;line-height:1.2;}
+.sb-logo-sub{font-size:0.65rem;color:var(--text3);}
+.nav-section{padding:12px 12px 4px;font-size:0.6rem;font-weight:700;color:var(--text3);letter-spacing:1.2px;text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;cursor:pointer;color:var(--text2);transition:all 0.2s;margin:2px 8px;font-size:0.83rem;font-weight:500;}
+.nav-item:hover{background:var(--bg3);color:var(--text);}
+.nav-item.active{background:rgba(255,215,0,0.1);color:var(--gold);}
+.nav-item i{width:18px;text-align:center;font-size:0.9rem;}
+.sidebar-footer{padding:14px;border-top:1px solid var(--border);}
+.btn-logout-side{width:100%;background:rgba(255,59,59,0.08);color:var(--red);border:1px solid rgba(255,59,59,0.15);border-radius:10px;padding:10px;font-size:0.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Poppins',sans-serif;}
+
+/* MAIN */
+.main-content{margin-left:230px;min-height:100vh;padding:20px;}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;}
+.topbar-left{display:flex;align-items:center;gap:12px;}
+.hamburger{display:none;cursor:pointer;font-size:1.2rem;padding:8px;background:var(--card);border-radius:8px;border:1px solid var(--border);}
+.page-title-main{font-family:'Rajdhani',sans-serif;font-size:1.4rem;font-weight:700;letter-spacing:0.5px;}
+.admin-badge{background:rgba(255,215,0,0.1);color:var(--gold);border:1px solid rgba(255,215,0,0.2);border-radius:20px;padding:6px 14px;font-size:0.76rem;font-weight:700;}
+
+/* CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;}
+.stat-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-bottom:10px;}
+.stat-num{font-size:1.6rem;font-weight:800;margin-bottom:2px;}
+.stat-label{font-size:0.72rem;color:var(--text2);}
+
+/* SECTIONS */
+.section{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:16px;}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.section-title{font-size:0.95rem;font-weight:700;display:flex;align-items:center;gap:8px;}
+.section-title i{color:var(--gold);}
+
+/* BUTTONS */
+.btn-sm{background:linear-gradient(135deg,#FF6B00,#FFD700);color:#000;font-weight:700;border:none;border-radius:8px;padding:8px 16px;font-size:0.78rem;cursor:pointer;font-family:'Poppins',sans-serif;white-space:nowrap;}
+.btn-sm-out{background:transparent;color:var(--gold);border:1px solid var(--gold);border-radius:8px;padding:8px 16px;font-size:0.78rem;cursor:pointer;font-family:'Poppins',sans-serif;white-space:nowrap;}
+.btn-red{background:rgba(255,59,59,0.1);color:var(--red);border:1px solid rgba(255,59,59,0.25);border-radius:7px;padding:5px 12px;font-size:0.73rem;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:600;}
+.btn-green{background:rgba(0,230,118,0.1);color:var(--green);border:1px solid rgba(0,230,118,0.25);border-radius:7px;padding:5px 12px;font-size:0.73rem;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:600;}
+.btn-gold-sm{background:rgba(255,215,0,0.12);color:var(--gold);border:1px solid rgba(255,215,0,0.25);border-radius:7px;padding:5px 12px;font-size:0.73rem;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:600;}
+.btn-blue{background:rgba(0,180,255,0.1);color:var(--blue);border:1px solid rgba(0,180,255,0.25);border-radius:7px;padding:5px 12px;font-size:0.73rem;cursor:pointer;font-family:'Poppins',sans-serif;font-weight:600;}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:500px;}
+th{text-align:left;font-size:0.7rem;font-weight:700;color:var(--text3);padding:8px 10px;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap;}
+td{font-size:0.8rem;padding:11px 10px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,0.02);}
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:0.68rem;font-weight:700;}
+.b-pending{background:rgba(255,215,0,0.12);color:var(--gold);}
+.b-complete{background:rgba(0,230,118,0.12);color:var(--green);}
+.b-rejected{background:rgba(255,59,59,0.12);color:var(--red);}
+.b-live{background:rgba(255,59,59,0.15);color:var(--red);}
+.b-upcoming{background:rgba(0,180,255,0.12);color:var(--blue);}
+
+/* FORM */
+.form-group{margin-bottom:13px;}
+.form-label{font-size:0.8rem;color:var(--text2);margin-bottom:5px;display:block;font-weight:600;}
+.form-inp{width:100%;background:var(--bg3);border:1.5px solid var(--border);color:var(--text);padding:11px 13px;border-radius:12px;font-size:0.88rem;outline:none;font-family:'Poppins',sans-serif;transition:border-color 0.2s;}
+.form-inp:focus{border-color:rgba(255,215,0,0.35);}
+.form-inp::placeholder{color:var(--text3);}
+textarea.form-inp{resize:vertical;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+select.form-inp{cursor:pointer;}
+
+/* SCREEN */
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:4000;display:none;align-items:center;justify-content:center;padding:16px;}
+.modal-box{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:22px;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;}
+.modal-title{font-size:1rem;font-weight:700;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;}
+.modal-close{cursor:pointer;color:var(--text3);font-size:1rem;background:var(--bg3);width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+
+/* TOGGLE */
+.toggle-wrap{display:flex;align-items:center;gap:8px;font-size:0.83rem;}
+.toggle{width:42px;height:22px;background:var(--bg3);border-radius:11px;cursor:pointer;position:relative;border:1px solid var(--border);transition:background 0.2s;flex-shrink:0;}
+.toggle.on{background:var(--gold2);}
+.toggle::after{content:'';width:16px;height:16px;background:white;border-radius:50%;position:absolute;top:2px;left:2px;transition:left 0.2s;}
+.toggle.on::after{left:22px;}
+
+/* IMAGE PREVIEW */
+.img-preview{width:100%;height:120px;background:var(--bg3);border-radius:10px;object-fit:contain;margin-top:6px;border:1px solid var(--border);}
+.img-preview-sq{width:100px;height:100px;background:var(--bg3);border-radius:10px;object-fit:cover;margin-top:6px;border:1px solid var(--border);}
+.img-preview-qr{width:120px;height:120px;background:var(--bg3);border-radius:10px;object-fit:contain;margin-top:6px;border:1px solid var(--border);}
+
+/* TOAST */
+#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--card2);border:1px solid var(--border);color:var(--text);padding:11px 22px;border-radius:30px;font-size:0.85rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity 0.3s;z-index:9999;white-space:nowrap;}
+
+/* MOBILE */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .sidebar.open~.main-content::before{content:'';position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99;}
+  .main-content{margin-left:0;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .hamburger{display:flex;}
+  .form-row{grid-template-columns:1fr;}
+  .form-row-3{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-icon">🛡️</div>
+    <div class="auth-title">Admin Panel</div>
+    <div class="auth-sub">Sirf authorized access</div>
+    <div class="inp-wrap"><i class="fas fa-envelope inp-icon"></i><input class="inp" type="email" id="a-email" placeholder="Admin Email"></div>
+    <div class="inp-wrap"><i class="fas fa-lock inp-icon"></i><input class="inp" type="password" id="a-pass" placeholder="Password"></div>
+    <button class="btn-ff" onclick="doAdminLogin()">🔐 Login</button>
+  </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="admin-app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sb-logo-icon" id="sb-logo-wrap">
+        <span id="sb-logo-text-icon">🎮</span>
+        <img id="sb-logo-img" src="" style="display:none;width:100%;height:100%;object-fit:cover;" alt="">
+      </div>
+      <div>
+        <div class="sb-logo-text" id="sb-app-name">Pro Free Fire</div>
+        <div class="sb-logo-sub">Admin Panel</div>
+      </div>
+    </div>
+
+    <div class="nav-section">Main</div>
+    <div class="nav-item active" onclick="showScreen('dashboard')"><i class="fas fa-chart-pie"></i> Dashboard</div>
+
+    <div class="nav-section">Finance</div>
+    <div class="nav-item" onclick="showScreen('deposits')"><i class="fas fa-arrow-up"></i> Deposits</div>
+    <div class="nav-item" onclick="showScreen('withdrawals')"><i class="fas fa-arrow-down"></i> Withdrawals</div>
+
+    <div class="nav-section">Tournaments</div>
+    <div class="nav-item" onclick="showScreen('tournaments')"><i class="fas fa-trophy"></i> Tournaments</div>
+    <div class="nav-item" onclick="showScreen('joinedusers')"><i class="fas fa-users"></i> Joined Users</div>
+
+    <div class="nav-section">Users</div>
+    <div class="nav-item" onclick="showScreen('users')"><i class="fas fa-user-circle"></i> All Users</div>
+
+    <div class="nav-section">Content</div>
+    <div class="nav-item" onclick="showScreen('banners')"><i class="fas fa-image"></i> Banners</div>
+    <div class="nav-item" onclick="showScreen('notifications')"><i class="fas fa-bell"></i> Notifications</div>
+
+    <div class="nav-section">Settings</div>
+    <div class="nav-item" onclick="showScreen('appsettings')"><i class="fas fa-cog"></i> App Settings</div>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout-side" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+    <div class="top-bar">
+      <div class="topbar-left">
+        <div class="hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></div>
+        <div class="page-title-main" id="page-title">Dashboard</div>
+      </div>
+      <div class="admin-badge">🛡️ Admin</div>
+    </div>
+
+    <!-- ===== DASHBOARD ===== -->
+    <div class="screen active" id="screen-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(255,215,0,0.12);color:var(--gold);"><i class="fas fa-users"></i></div>
+          <div class="stat-num" id="st-users" style="color:var(--gold);">0</div>
+          <div class="stat-label">Total Users</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(0,230,118,0.12);color:var(--green);"><i class="fas fa-arrow-up"></i></div>
+          <div class="stat-num" id="st-deposits" style="color:var(--green);">0</div>
+          <div class="stat-label">Total Deposits</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(255,59,59,0.12);color:var(--red);"><i class="fas fa-arrow-down"></i></div>
+          <div class="stat-num" id="st-withdrawals" style="color:var(--red);">0</div>
+          <div class="stat-label">Withdrawals</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(255,215,0,0.12);color:var(--gold);"><i class="fas fa-clock"></i></div>
+          <div class="stat-num" id="st-pending" style="color:var(--gold);">0</div>
+          <div class="stat-label">Pending</div>
+        </div>
+      </div>
+      <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(255,107,0,0.12);color:#FF6B00;"><i class="fas fa-trophy"></i></div>
+          <div class="stat-num" id="st-tournaments" style="color:#FF6B00;">0</div>
+          <div class="stat-label">Tournaments</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(0,180,255,0.12);color:var(--blue);"><i class="fas fa-fire"></i></div>
+          <div class="stat-num" id="st-live" style="color:var(--blue);">0</div>
+          <div class="stat-label">Live Now</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(0,230,118,0.12);color:var(--green);"><i class="fas fa-coins"></i></div>
+          <div class="stat-num" id="st-total-prize" style="color:var(--green);">₹0</div>
+          <div class="stat-label">Total Prize Pool</div>
+        </div>
+      </div>
+
+      <!-- Pending Deposits -->
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title"><i class="fas fa-clock"></i> Pending Deposits</div>
+          <button class="btn-sm-out" onclick="showScreen('deposits')">Sab Dekho</button>
+        </div>
+        <div class="tbl-wrap"><table>
+          <tr><th>User</th><th>Amount</th><th>TXN ID</th><th>Date</th><th>Action</th></tr>
+          <tbody id="dash-deposits"></tbody>
+        </table></div>
+      </div>
+
+      <!-- Pending Withdrawals -->
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title"><i class="fas fa-arrow-down"></i> Pending Withdrawals</div>
+          <button class="btn-sm-out" onclick="showScreen('withdrawals')">Sab Dekho</button>
+        </div>
+        <div class="tbl-wrap"><table>
+          <tr><th>User</th><th>Amount</th><th>Method</th><th>Details</th><th>Action</th></tr>
+          <tbody id="dash-withdrawals"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ===== DEPOSITS ===== -->
+    <div class="screen" id="screen-deposits">
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title"><i class="fas fa-arrow-up"></i> Deposit Requests</div>
+          <select class="form-inp" id="dep-filter" onchange="loadDeposits()" style="width:130px;padding:7px 10px;font-size:0.8rem;">
+            <option value="all">All</option>
+            <option value="PENDING">Pending</option>
+            <option value="COMPLETE">Complete</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
+        </div>
+        <div class="tbl-wrap"><table>
+          <tr><th>User</th><th>Amount</th><th>TXN ID</th><th>Date</th><th>Status</th><th>Action</th></tr>
+          <tbody id="deposits-list"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ===== WITHDRAWALS ===== -->
+    <div class="screen" id="screen-withdrawals">
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title"><i class="fas fa-arrow-down"></i> Withdrawal Requests</div>
+          <select class="form-inp" id="wit-filter" onchange="loadWithdrawals()" style="width:130px;padding:7px 10px;font-size:0.8rem;">
+            <option value="all">All</option>
+            <option value="PENDING">Pending</option>
+            <option value="COMPLETE">Complete</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
+        </div>
+        <div class="tbl-wrap"><table>
+          <tr><th>User</th><th>Amount</th><th>Method</th><th>Details</th><th>Date</th><th>Status</th><th>Action</th></tr>
+          <tbody id="withdrawals-list"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ===== TOURNAMENTS ===== -->
+    <div class="screen" id="screen-tournaments">
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title"><i class="fas fa-trophy"></i> Tournaments</div>
+          <button class="btn-sm" onclick="openTourModal()">+ New Tournament</button>
+        </div>
+        <div class="tbl-wrap"><table>
+          <tr><th>Name</th><th>Type</th><th>Date/Time</th><th>Entry</th><th>Prize</th><th>Slots</th><th>Status</th><th>Action</th></tr>
+          <tbody id="tournaments-list"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ===== JOINED USERS ===== -->
+    <div class="screen" id="screen-joinedusers">
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title"><i class="fas fa-users"></i> Joined Users</div>
+          <select class="form-inp" id="jt-filter" onchange="loadJoinedUsers()" style="width:200px;padding:7px 10px;font-size:0.8rem;">
+            <option value="">-- Tournament Select --</option>
+          </select>
+        </div>
+        <div class="tbl-wrap"><table>
+          <tr><th>User</th><th>Tournament</th><th>Entry Fee</th><th>Joined At</th><th>Prize Given</th><th>Action</th></tr>
+          <tbody id="joined-list"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ===== USERS ===== -->
+    <div class="screen" id="screen-users">
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title"><i class="fas fa-user-circle"></i> All Users</div>
+          <input class="form-inp" type="text" id="user-search" placeholder="Search..." oninput="filterUsers()" style="width:180px;padding:7px 12px;font-size:0.8rem;">
+        </div>
+        <div class="tbl-wrap"><table>
+          <tr><th>Name / Email / UID</th><th>Balance</th><th>Joined</th><th>Action</th></tr>
+          <tbody id="users-list"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ===== BANNERS ===== -->
+    <div class="screen" id="screen-banners">
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title"><i class="fas fa-image"></i> Promo Banners</div>
+          <button class="btn-sm" onclick="openModal('modal-banner')">+ Add Banner</button>
+        </div>
+        <div id="banners-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;"></div>
+      </div>
+    </div>
+
+    <!-- ===== NOTIFICATIONS ===== -->
+    <div class="screen" id="screen-notifications">
+      <div class="section">
+        <div class="section-head">
+          <div class="section-title"><i class="fas fa-bell"></i> Notifications</div>
+          <button class="btn-sm" onclick="openModal('modal-notif')">+ Send</button>
+        </div>
+        <div class="tbl-wrap"><table>
+          <tr><th>Title</th><th>Body</th><th>Date</th><th>Status</th><th>Action</th></tr>
+          <tbody id="notif-list"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ===== APP SETTINGS ===== -->
+    <div class="screen" id="screen-appsettings">
+      <!-- App Identity -->
+      <div class="section">
+        <div class="section-title" style="margin-bottom:16px;"><i class="fas fa-gamepad"></i> App Identity</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">📝 App Name</label>
+            <input class="form-inp" type="text" id="set-appname" placeholder="Pro Free Fire">
+          </div>
+          <div class="form-group">
+            <label class="form-label">🔢 Version</label>
+            <input class="form-inp" type="text" id="set-version" placeholder="1.0">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">🖼️ App Logo URL (Login screen pe dikhega)</label>
+          <input class="form-inp" type="url" id="set-logo" placeholder="https://..." oninput="previewImg('set-logo','prev-logo')">
+          <img id="prev-logo" class="img-preview-sq" src="" alt="" style="display:none;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">📣 Tagline</label>
+          <input class="form-inp" type="text" id="set-tagline" placeholder="TOURNAMENT · EARN · WIN">
+        </div>
+        <button class="btn-sm" onclick="saveSettings()">💾 Save</button>
+      </div>
+
+      <!-- Deposit Settings -->
+      <div class="section">
+        <div class="section-title" style="margin-bottom:16px;"><i class="fas fa-qrcode"></i> Deposit / Payment</div>
+        <div class="form-group">
+          <label class="form-label">📱 UPI QR Code Image URL</label>
+          <input class="form-inp" type="url" id="set-qr" placeholder="https://..." oninput="previewImg('set-qr','prev-qr')">
+          <img id="prev-qr" class="img-preview-qr" src="" alt="" style="display:none;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">💳 UPI ID (user ko dikhega)</label>
+          <input class="form-inp" type="text" id="set-upiid" placeholder="yourname@upi">
+        </div>
+        <div class="form-group">
+          <label class="form-label">💰 Deposit Amount Buttons (comma se alag karo)</label>
+          <input class="form-inp" type="text" id="set-depamts" placeholder="50,100,200,500,1000,2000">
+        </div>
+        <button class="btn-sm" onclick="saveSettings()">💾 Save</button>
+      </div>
+
+      <!-- Withdrawal Settings -->
+      <div class="section">
+        <div class="section-title" style="margin-bottom:16px;"><i class="fas fa-arrow-down"></i> Withdrawal Settings</div>
+        <div class="form-group">
+          <label class="form-label">📷 UPI Method Image URL</label>
+          <input class="form-inp" type="url" id="set-upi-img" placeholder="https://..." oninput="previewImg('set-upi-img','prev-upi-img')">
+          <img id="prev-upi-img" class="img-preview" src="" alt="" style="display:none;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">📷 Bank Transfer Image URL</label>
+          <input class="form-inp" type="url" id="set-bank-img" placeholder="https://..." oninput="previewImg('set-bank-img','prev-bank-img')">
+          <img id="prev-bank-img" class="img-preview" src="" alt="" style="display:none;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">💰 Withdrawal Amount Buttons (comma se)</label>
+          <input class="form-inp" type="text" id="set-witamts" placeholder="50,100,200,500,1000,2000">
+        </div>
+        <button class="btn-sm" onclick="saveSettings()">💾 Save</button>
+      </div>
+
+      <!-- Links -->
+      <div class="section">
+        <div class="section-title" style="margin-bottom:16px;"><i class="fas fa-link"></i> Links & Support</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label"><i class="fab fa-whatsapp" style="color:#25D366;"></i> WhatsApp Link</label>
+            <input class="form-inp" type="url" id="set-whatsapp" placeholder="https://wa.me/91...">
+          </div>
+          <div class="form-group">
+            <label class="form-label"><i class="fab fa-telegram" style="color:#0088CC;"></i> Telegram Link</label>
+            <input class="form-inp" type="url" id="set-telegram" placeholder="https://t.me/...">
+          </div>
+        </div>
+        <button class="btn-sm" onclick="saveSettings()">💾 Save</button>
+      </div>
+
+      <!-- Policy -->
+      <div class="section">
+        <div class="section-title" style="margin-bottom:16px;"><i class="fas fa-file-alt"></i> Policy & Terms</div>
+        <div class="form-group">
+          <label class="form-label">Privacy Policy</label>
+          <textarea class="form-inp" id="set-policy" rows="4" placeholder="Privacy policy text..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Terms & Conditions</label>
+          <textarea class="form-inp" id="set-terms" rows="4" placeholder="Terms & Conditions..."></textarea>
+        </div>
+        <button class="btn-sm" onclick="saveSettings()">💾 Save All Settings</button>
+      </div>
+    </div>
+
+  </div><!-- main-content -->
+</div><!-- admin-app -->
+
+<!-- TOURNAMENT MODAL -->
+<div class="modal-overlay" id="modal-tournament" onclick="modalBgClose(event,'modal-tournament')">
+  <div class="modal-box">
+    <div class="modal-title">
+      <span id="tour-modal-heading">🏆 New Tournament</span>
+      <div class="modal-close" onclick="closeModal('modal-tournament')"><i class="fas fa-times"></i></div>
+    </div>
+    <input type="hidden" id="tour-edit-id">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Tournament Name *</label>
+        <input class="form-inp" type="text" id="t-name" placeholder="e.g. Grand Finals #1">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Type</label>
+        <select class="form-inp" id="t-type">
+          <option>Solo</option><option>Duo</option><option>Squad</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">📅 Date</label>
+        <input class="form-inp" type="date" id="t-date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">⏰ Time</label>
+        <input class="form-inp" type="time" id="t-time">
+      </div>
+    </div>
+    <div class="form-row-3">
+      <div class="form-group">
+        <label class="form-label">Entry Fee (₹)</label>
+        <input class="form-inp" type="number" id="t-entry" placeholder="50">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Prize Pool (₹)</label>
+        <input class="form-inp" type="number" id="t-prize" placeholder="5000">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Total Slots</label>
+        <input class="form-inp" type="number" id="t-slots" placeholder="100">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Map</label>
+        <select class="form-inp" id="t-map">
+          <option>Bermuda</option><option>Purgatory</option><option>Kalahari</option><option>Alpine</option><option>Nexterra</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-inp" id="t-status">
+          <option value="upcoming">Upcoming</option>
+          <option value="live">Live</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Banner Image URL</label>
+      <input class="form-inp" type="url" id="t-banner" placeholder="https://..." oninput="previewImg('t-banner','t-banner-prev')">
+      <img id="t-banner-prev" class="img-preview" src="" alt="" style="display:none;margin-top:8px;">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-inp" id="t-desc" rows="2" placeholder="Tournament details..."></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">🎮 Room ID (join ke baad dikhega)</label>
+        <input class="form-inp" type="text" id="t-room-id" placeholder="Room ID">
+      </div>
+      <div class="form-group">
+        <label class="form-label">🔑 Room Password</label>
+        <input class="form-inp" type="text" id="t-room-pass" placeholder="Password">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">🏅 Prize Distribution (e.g. 1st-₹2000, 2nd-₹1000)</label>
+      <input class="form-inp" type="text" id="t-prize-dist" placeholder="1st-₹2000, 2nd-₹1000, 3rd-₹500">
+    </div>
+    <button class="btn-sm" onclick="saveTournament()" style="width:100%;padding:13px;">💾 Save Tournament</button>
+  </div>
+</div>
+
+<!-- PRIZE GIVE MODAL -->
+<div class="modal-overlay" id="modal-give-prize" onclick="modalBgClose(event,'modal-give-prize')">
+  <div class="modal-box">
+    <div class="modal-title">
+      <span>🏆 Prize Dena</span>
+      <div class="modal-close" onclick="closeModal('modal-give-prize')"><i class="fas fa-times"></i></div>
+    </div>
+    <input type="hidden" id="gp-uid">
+    <input type="hidden" id="gp-jid">
+    <div style="background:var(--bg3);border-radius:12px;padding:12px;margin-bottom:14px;">
+      <div style="font-size:0.85rem;font-weight:700;" id="gp-user-name">User</div>
+      <div style="font-size:0.78rem;color:var(--text2);" id="gp-tournament-name">Tournament</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">💰 Prize Amount (₹)</label>
+      <input class="form-inp" type="number" id="gp-amount" placeholder="1000">
+    </div>
+    <div class="form-group">
+      <label class="form-label">📝 Note (optional)</label>
+      <input class="form-inp" type="text" id="gp-note" placeholder="e.g. 1st Place Winner">
+    </div>
+    <button class="btn-sm" onclick="givePrize()" style="width:100%;padding:13px;">✅ Prize Do</button>
+  </div>
+</div>
+
+<!-- USER DETAIL MODAL -->
+<div class="modal-overlay" id="modal-user" onclick="modalBgClose(event,'modal-user')">
+  <div class="modal-box">
+    <div class="modal-title">
+      <span>👤 User Details</span>
+      <div class="modal-close" onclick="closeModal('modal-user')"><i class="fas fa-times"></i></div>
+    </div>
+    <div id="user-detail-content" style="margin-bottom:16px;"></div>
+    <div class="form-group">
+      <label class="form-label">💰 Balance Manually Set Karo (₹)</label>
+      <div style="display:flex;gap:10px;">
+        <input class="form-inp" type="number" id="manual-balance" placeholder="Amount">
+        <button class="btn-sm" onclick="setUserBalance()">Set</button>
+      </div>
+    </div>
+    <div style="background:rgba(0,230,118,0.05);border:1px solid rgba(0,230,118,0.15);border-radius:12px;padding:14px;margin-top:10px;">
+      <label class="form-label" style="color:var(--green);">➕ Balance Add Karo</label>
+      <div style="display:flex;gap:10px;">
+        <input class="form-inp" type="number" id="add-balance" placeholder="Amount add karo">
+        <button class="btn-green" onclick="addUserBalance()">Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BANNER MODAL -->
+<div class="modal-overlay" id="modal-banner" onclick="modalBgClose(event,'modal-banner')">
+  <div class="modal-box">
+    <div class="modal-title">
+      <span>🖼️ Banner Add Karo</span>
+      <div class="modal-close" onclick="closeModal('modal-banner')"><i class="fas fa-times"></i></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Image URL *</label>
+      <input class="form-inp" type="url" id="b-img" placeholder="https://..." oninput="previewImg('b-img','b-img-prev')">
+      <img id="b-img-prev" class="img-preview" src="" alt="" style="display:none;margin-top:8px;">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Click Link (optional — kahan jaayega click karke)</label>
+      <input class="form-inp" type="url" id="b-link" placeholder="https://...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Order (number)</label>
+      <input class="form-inp" type="number" id="b-order" placeholder="1" value="1">
+    </div>
+    <button class="btn-sm" onclick="saveBanner()" style="width:100%;padding:13px;">💾 Save Banner</button>
+  </div>
+</div>
+
+<!-- NOTIFICATION MODAL -->
+<div class="modal-overlay" id="modal-notif" onclick="modalBgClose(event,'modal-notif')">
+  <div class="modal-box">
+    <div class="modal-title">
+      <span>🔔 Notification Bhejo</span>
+      <div class="modal-close" onclick="closeModal('modal-notif')"><i class="fas fa-times"></i></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Title *</label>
+      <input class="form-inp" type="text" id="n-title" placeholder="Notification title">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Body / Message *</label>
+      <textarea class="form-inp" id="n-body" rows="3" placeholder="Notification message..."></textarea>
+    </div>
+    <button class="btn-sm" onclick="saveNotification()" style="width:100%;padding:13px;">📤 Send</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+// ===== FIREBASE CONFIG =====
+// ⚠️ YAHAN APNA FIREBASE CONFIG PASTE KARO (same config jo user app mein hai)
+const firebaseConfig = {
+  apiKey: "AIzaSyAi6hx3iXNxy0aZVNKUIfeFfbpk1Exh7Is",
+  authDomain: "tg-gangstar-093.firebaseapp.com",
+  projectId: "tg-gangstar-093",
+  storageBucket: "tg-gangstar-093.firebasestorage.app",
+  messagingSenderId: "91704497521",
+  appId: "1:91704497521:web:e53a9247e21c64341cd2d0"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
+
+const ADMIN_EMAILS = ['tggangstar745@gmail.com']; // ⬅️ YAHAN APNA EMAIL DAALO
+let currentUser = null;
+let allUsersData = {};
+let selectedUserId = null;
+let allTournaments = [];
+let allJoinedData = [];
+
+// ===== AUTH =====
+function doAdminLogin() {
+  const email = document.getElementById('a-email').value.trim();
+  const pass = document.getElementById('a-pass').value;
+  if(!email||!pass) return toast('Email aur password daalo');
+  auth.signInWithEmailAndPassword(email,pass)
+    .then(cred => {
+      if(!ADMIN_EMAILS.includes(cred.user.email)) {
+        auth.signOut();
+        toast('❌ Admin access nahi hai');
+      }
+    })
+    .catch(e=>toast('❌ '+e.message));
+}
+function doLogout(){auth.signOut();}
+
+auth.onAuthStateChanged(user=>{
+  if(user && ADMIN_EMAILS.includes(user.email)){
+    currentUser=user;
+    document.getElementById('auth-screen').style.display='none';
+    document.getElementById('admin-app').style.display='block';
+    initAdmin();
+  } else {
+    document.getElementById('auth-screen').style.display='flex';
+    document.getElementById('admin-app').style.display='none';
+  }
+});
+
+// ===== INIT =====
+function initAdmin(){
+  loadDashboardStats();
+  loadSettings();
+  loadDeposits();
+  loadWithdrawals();
+  loadTournaments();
+  loadUsers();
+  loadBanners();
+  loadNotifications();
+  loadJoinedUsers();
+}
+
+// ===== DASHBOARD STATS =====
+function loadDashboardStats(){
+  db.ref('users').on('value', s=>{
+    document.getElementById('st-users').textContent = s.numChildren();
+    let total=0; s.forEach(u=>{if(u.val().balance)total+=parseFloat(u.val().balance);});
+  });
+  db.ref('deposits').on('value', s=>{
+    let cnt=0,pend=0;
+    s.forEach(d=>{cnt++;if(d.val().status==='PENDING')pend++;});
+    document.getElementById('st-deposits').textContent=cnt;
+    document.getElementById('st-pending').textContent=pend;
+    // dash pending deposits
+    const tb=document.getElementById('dash-deposits');
+    const arr=[]; s.forEach(d=>{if(d.val().status==='PENDING')arr.unshift({id:d.key,...d.val()});});
+    if(!arr.length){tb.innerHTML=`<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:16px;">Koi pending deposit nahi</td></tr>`;return;}
+    tb.innerHTML=arr.slice(0,5).map(d=>`<tr>
+      <td>
+        <div style="font-size:0.88rem;font-weight:700;color:#fff;">${d.userName||'-'}</div>
+        <div style="font-size:0.75rem;color:#00B4FF;margin-top:2px;">${d.userEmail||'-'}</div>
+      </td>
+      <td style="color:var(--green);font-weight:800;">₹${d.amount}</td>
+      <td style="font-size:0.78rem;font-family:monospace;color:var(--gold);">${d.transactionId||'-'}</td>
+      <td style="font-size:0.72rem;color:var(--text2);">${new Date(d.timestamp).toLocaleString('hi-IN')}</td>
+      <td>
+        <button class="btn-green" onclick="updateDeposit('${d.id}','COMPLETE','${d.userId}',${d.amount})" style="display:block;margin-bottom:4px;width:100%;">✅ Complete</button>
+        <button class="btn-red" onclick="updateDeposit('${d.id}','REJECTED','${d.userId}',0)" style="display:block;width:100%;">❌ Reject</button>
+      </td></tr>`).join('');
+  });
+  db.ref('withdrawals').on('value', s=>{
+    let cnt=0; s.forEach(()=>cnt++);
+    document.getElementById('st-withdrawals').textContent=cnt;
+    const tb=document.getElementById('dash-withdrawals');
+    const arr=[]; s.forEach(d=>{if(d.val().status==='PENDING')arr.unshift({id:d.key,...d.val()});});
+    if(!arr.length){tb.innerHTML=`<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:16px;">Koi pending withdrawal nahi</td></tr>`;return;}
+    tb.innerHTML=arr.slice(0,5).map(d=>`<tr>
+      <td>
+        <div style="font-size:0.88rem;font-weight:700;color:#fff;">${d.userName||'-'}</div>
+        <div style="font-size:0.75rem;color:#00B4FF;margin-top:2px;">${d.userEmail||'-'}</div>
+      </td>
+      <td style="color:var(--red);font-weight:800;">₹${d.amount}</td>
+      <td><span style="font-size:0.75rem;font-weight:700;">${d.method==='upi'?'📱 UPI':'🏦 Bank'}</span></td>
+      <td style="font-size:0.75rem;color:var(--text2);">${d.method==='upi'?(d.upiId||'-'):`${d.accountNumber||'-'} / ${d.ifsc||'-'}`}</td>
+      <td>
+        <button class="btn-green" onclick="updateWithdrawal('${d.id}','COMPLETE')" style="display:block;margin-bottom:4px;width:100%;">✅ Complete</button>
+        <button class="btn-red" onclick="updateWithdrawal('${d.id}','REJECTED')" style="display:block;width:100%;">❌ Reject</button>
+      </td></tr>`).join('');
+  });
+  db.ref('tournaments').on('value', s=>{
+    let cnt=0,live=0,prize=0;
+    s.forEach(t=>{cnt++;if(t.val().status==='live')live++;prize+=parseFloat(t.val().prizePool||0);});
+    document.getElementById('st-tournaments').textContent=cnt;
+    document.getElementById('st-live').textContent=live;
+    document.getElementById('st-total-prize').textContent='₹'+prize;
+  });
+}
+
+// ===== DEPOSITS =====
+function loadDeposits(){
+  const filter = document.getElementById('dep-filter').value;
+  db.ref('deposits').on('value', s=>{
+    const tb=document.getElementById('deposits-list');
+    if(!s.exists()){tb.innerHTML=`<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px;">Koi deposit nahi</td></tr>`;return;}
+    const arr=[];
+    s.forEach(d=>{
+      const v={id:d.key,...d.val()};
+      if(filter==='all'||v.status===filter) arr.unshift(v);
+    });
+    if(!arr.length){tb.innerHTML=`<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px;">Koi result nahi</td></tr>`;return;}
+    tb.innerHTML=arr.map(d=>`<tr>
+      <td>
+        <div style="font-size:0.88rem;font-weight:700;color:#fff;">${d.userName||'-'}</div>
+        <div style="font-size:0.75rem;color:#00B4FF;margin-top:2px;">${d.userEmail||'-'}</div>
+      </td>
+      <td style="color:var(--green);font-weight:800;font-size:0.95rem;">₹${d.amount}</td>
+      <td style="font-size:0.78rem;font-family:monospace;color:var(--gold);">${d.transactionId||'-'}</td>
+      <td style="font-size:0.72rem;color:var(--text2);">${new Date(d.timestamp).toLocaleString('hi-IN')}</td>
+      <td><span class="badge ${d.status==='COMPLETE'?'b-complete':d.status==='REJECTED'?'b-rejected':'b-pending'}">${d.status}</span></td>
+      <td>
+        ${d.status==='PENDING'?`
+          <button class="btn-green" onclick="updateDeposit('${d.id}','COMPLETE','${d.userId}',${d.amount})" style="display:block;margin-bottom:5px;width:100%;">✅ Complete</button>
+          <button class="btn-red" onclick="updateDeposit('${d.id}','REJECTED','${d.userId}',0)" style="display:block;width:100%;">❌ Reject</button>
+        `:d.status==='COMPLETE'?`<span style="color:var(--green);font-weight:700;font-size:0.78rem;">✅ Done</span>`:`<span style="color:var(--red);font-weight:700;font-size:0.78rem;">❌ Rejected</span>`}
+      </td></tr>`).join('');
+  });
+}
+
+function updateDeposit(id, status, userId, amount){
+  if(!confirm(`Deposit ${status} karna hai?`)) return;
+  db.ref('deposits/'+id).update({status});
+  if(status==='COMPLETE' && userId && amount>0){
+    db.ref('users/'+userId+'/balance').transaction(b=>(parseFloat(b)||0)+parseFloat(amount));
+    toast('✅ Deposit complete + Balance add ho gaya');
+  } else toast(`✅ Deposit ${status}`);
+}
+
+// ===== WITHDRAWALS =====
+function loadWithdrawals(){
+  const filter = document.getElementById('wit-filter').value;
+  db.ref('withdrawals').on('value', s=>{
+    const tb=document.getElementById('withdrawals-list');
+    if(!s.exists()){tb.innerHTML=`<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:20px;">Koi withdrawal nahi</td></tr>`;return;}
+    const arr=[];
+    s.forEach(d=>{const v={id:d.key,...d.val()};if(filter==='all'||v.status===filter)arr.unshift(v);});
+    if(!arr.length){tb.innerHTML=`<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:20px;">Koi result nahi</td></tr>`;return;}
+    tb.innerHTML=arr.map(d=>`<tr>
+      <td>
+        <div style="font-size:0.88rem;font-weight:700;color:#fff;">${d.userName||'-'}</div>
+        <div style="font-size:0.75rem;color:#00B4FF;margin-top:2px;">${d.userEmail||'-'}</div>
+      </td>
+      <td style="color:var(--red);font-weight:800;font-size:0.95rem;">₹${d.amount}</td>
+      <td><span style="background:${d.method==='upi'?'rgba(0,180,255,0.1)':'rgba(255,215,0,0.1)'};color:${d.method==='upi'?'#00B4FF':'#FFD700'};padding:2px 8px;border-radius:6px;font-size:0.72rem;font-weight:700;">${d.method==='upi'?'📱 UPI':'🏦 Bank'}</span></td>
+      <td style="font-size:0.75rem;color:var(--text2);">${d.method==='upi'
+        ? `<b style="color:#FFD700;">UPI:</b> ${d.upiId||'-'}`
+        : `<b style="color:#FFD700;">Acc:</b> ${d.accountNumber||'-'}<br><b style="color:#FFD700;">IFSC:</b> ${d.ifsc||'-'}<br><b style="color:#FFD700;">Name:</b> ${d.accountName||'-'}`}</td>
+      <td style="font-size:0.72rem;color:var(--text2);">${new Date(d.timestamp).toLocaleString('hi-IN')}</td>
+      <td><span class="badge ${d.status==='COMPLETE'?'b-complete':d.status==='REJECTED'?'b-rejected':'b-pending'}">${d.status}</span></td>
+      <td>
+        ${d.status==='PENDING'?`
+          <button class="btn-green" onclick="updateWithdrawal('${d.id}','COMPLETE')" style="display:block;margin-bottom:5px;width:100%;">✅ Complete</button>
+          <button class="btn-red" onclick="updateWithdrawal('${d.id}','REJECTED')" style="display:block;width:100%;">❌ Reject</button>
+        `:d.status==='COMPLETE'?'<span style="color:var(--green);font-size:0.75rem;font-weight:700;">✅ Done</span>':'<span style="color:var(--red);font-size:0.75rem;font-weight:700;">❌ Rejected</span>'}
+      </td></tr>`).join('');
+  });
+}
+function loadWithdrawals(){
+  const filter = document.getElementById('wit-filter').value;
+  db.ref('withdrawals').on('value', s=>{
+    const tb=document.getElementById('withdrawals-list');
+    if(!s.exists()){tb.innerHTML=`<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:20px;">Koi withdrawal nahi</td></tr>`;return;}
+    const arr=[];
+    s.forEach(d=>{const v={id:d.key,...d.val()};if(filter==='all'||v.status===filter)arr.unshift(v);});
+    if(!arr.length){tb.innerHTML=`<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:20px;">Koi result nahi</td></tr>`;return;}
+    tb.innerHTML=arr.map(d=>`<tr>
+      <td>
+        <div style="font-size:0.88rem;font-weight:700;color:#fff;">${d.userName||'-'}</div>
+        <div style="font-size:0.75rem;color:#00B4FF;margin-top:2px;">${d.userEmail||'-'}</div>
+      </td>
+      <td style="color:var(--red);font-weight:800;font-size:0.95rem;">₹${d.amount}</td>
+      <td><span style="background:${d.method==='upi'?'rgba(0,180,255,0.1)':'rgba(255,215,0,0.1)'};color:${d.method==='upi'?'#00B4FF':'#FFD700'};padding:2px 8px;border-radius:6px;font-size:0.72rem;font-weight:700;">${d.method==='upi'?'📱 UPI':'🏦 Bank'}</span></td>
+      <td style="font-size:0.75rem;color:var(--text2);">${d.method==='upi'
+        ? `<b style="color:#FFD700;">UPI:</b> ${d.upiId||'-'}`
+        : `<b style="color:#FFD700;">Acc:</b> ${d.accountNumber||'-'}<br><b style="color:#FFD700;">IFSC:</b> ${d.ifsc||'-'}<br><b style="color:#FFD700;">Name:</b> ${d.accountName||'-'}`}</td>
+      <td style="font-size:0.72rem;color:var(--text2);">${new Date(d.timestamp).toLocaleString('hi-IN')}</td>
+      <td><span class="badge ${d.status==='COMPLETE'?'b-complete':d.status==='REJECTED'?'b-rejected':'b-pending'}">${d.status}</span></td>
+      <td>
+        ${d.status==='PENDING'?`
+          <button class="btn-green" onclick="updateWithdrawal('${d.id}','COMPLETE','${d.userId}',${d.amount})" style="display:block;margin-bottom:5px;width:100%;">✅ Complete</button>
+          <button class="btn-red" onclick="updateWithdrawal('${d.id}','REJECTED','${d.userId}',0)" style="display:block;width:100%;">❌ Reject</button>
+        `:d.status==='COMPLETE'?'<span style="color:var(--green);font-size:0.75rem;font-weight:700;">✅ Done</span>':'<span style="color:var(--red);font-size:0.75rem;font-weight:700;">❌ Rejected</span>'}
+      </td></tr>`).join('');
+  });
+}
+
+// ===== TOURNAMENTS =====
+function loadTournaments(){
+  db.ref('tournaments').on('value', s=>{
+    allTournaments=[];
+    if(s.exists()) s.forEach(t=>allTournaments.push({id:t.key,...t.val()}));
+    const tb=document.getElementById('tournaments-list');
+    // Update filter dropdown
+    const sel=document.getElementById('jt-filter');
+    sel.innerHTML='<option value="">-- Tournament Select --</option>'+allTournaments.map(t=>`<option value="${t.id}">${t.name||t.id}</option>`).join('');
+    if(!allTournaments.length){tb.innerHTML=`<tr><td colspan="8" style="text-align:center;color:var(--text3);padding:20px;">Koi tournament nahi</td></tr>`;return;}
+    tb.innerHTML=allTournaments.map(t=>`<tr>
+      <td style="font-weight:700;">${t.name||'-'}</td>
+      <td>${t.type||'-'}</td>
+      <td style="font-size:0.75rem;">${t.date||'-'} ${t.time||''}</td>
+      <td style="color:var(--gold);font-weight:700;">₹${t.entryFee||0}</td>
+      <td style="color:var(--green);font-weight:700;">₹${t.prizePool||0}</td>
+      <td>${t.joinedCount||0}/${t.totalSlots||100}</td>
+      <td><span class="badge ${t.status==='live'?'b-live':t.status==='upcoming'?'b-upcoming':'b-complete'}">${t.status||'upcoming'}</span></td>
+      <td style="display:flex;gap:4px;flex-wrap:wrap;">
+        <button class="btn-gold-sm" onclick="editTournament('${t.id}')">✏️</button>
+        <button class="btn-red" onclick="deleteTournament('${t.id}')">🗑️</button>
+        ${t.status==='live'?`<button class="btn-blue" onclick="setTourStatus('${t.id}','completed')">End</button>`:''}
+        ${t.status==='upcoming'?`<button class="btn-green" onclick="setTourStatus('${t.id}','live')">▶ Live</button>`:''}
+      </td></tr>`).join('');
+  });
+}
+function openTourModal(){
+  document.getElementById('tour-modal-heading').textContent='🏆 New Tournament';
+  document.getElementById('tour-edit-id').value='';
+  ['t-name','t-entry','t-prize','t-slots','t-banner','t-desc','t-room-id','t-room-pass','t-prize-dist'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('t-type').value='Solo';
+  document.getElementById('t-status').value='upcoming';
+  document.getElementById('t-banner-prev').style.display='none';
+  document.getElementById('t-date').value=new Date().toISOString().split('T')[0];
+  openModal('modal-tournament');
+}
+function editTournament(id){
+  const t=allTournaments.find(x=>x.id===id);
+  if(!t) return;
+  document.getElementById('tour-modal-heading').textContent='✏️ Edit Tournament';
+  document.getElementById('tour-edit-id').value=id;
+  document.getElementById('t-name').value=t.name||'';
+  document.getElementById('t-type').value=t.type||'Solo';
+  document.getElementById('t-date').value=t.date||'';
+  document.getElementById('t-time').value=t.time||'';
+  document.getElementById('t-entry').value=t.entryFee||0;
+  document.getElementById('t-prize').value=t.prizePool||0;
+  document.getElementById('t-slots').value=t.totalSlots||100;
+  document.getElementById('t-map').value=t.map||'Bermuda';
+  document.getElementById('t-status').value=t.status||'upcoming';
+  document.getElementById('t-banner').value=t.bannerUrl||'';
+  document.getElementById('t-desc').value=t.description||'';
+  document.getElementById('t-room-id').value=t.roomId||'';
+  document.getElementById('t-room-pass').value=t.roomPassword||'';
+  document.getElementById('t-prize-dist').value=t.prizeDistribution||'';
+  if(t.bannerUrl){document.getElementById('t-banner-prev').src=t.bannerUrl;document.getElementById('t-banner-prev').style.display='block';}
+  openModal('modal-tournament');
+}
+function saveTournament(){
+  const name=document.getElementById('t-name').value.trim();
+  if(!name) return toast('Tournament name daalo');
+  const id=document.getElementById('tour-edit-id').value;
+  const data={
+    name, type:document.getElementById('t-type').value,
+    date:document.getElementById('t-date').value,
+    time:document.getElementById('t-time').value,
+    entryFee:parseFloat(document.getElementById('t-entry').value)||0,
+    prizePool:parseFloat(document.getElementById('t-prize').value)||0,
+    totalSlots:parseInt(document.getElementById('t-slots').value)||100,
+    map:document.getElementById('t-map').value,
+    status:document.getElementById('t-status').value,
+    bannerUrl:document.getElementById('t-banner').value.trim(),
+    description:document.getElementById('t-desc').value.trim(),
+    roomId:document.getElementById('t-room-id').value.trim(),
+    roomPassword:document.getElementById('t-room-pass').value.trim(),
+    prizeDistribution:document.getElementById('t-prize-dist').value.trim(),
+    updatedAt:Date.now()
+  };
+  if(id){ db.ref('tournaments/'+id).update(data).then(()=>{toast('✅ Tournament updated');closeModal('modal-tournament');});}
+  else { data.createdAt=Date.now(); data.joinedCount=0; db.ref('tournaments').push(data).then(()=>{toast('✅ Tournament created');closeModal('modal-tournament');});}
+}
+function deleteTournament(id){
+  if(!confirm('Tournament delete karna hai?')) return;
+  db.ref('tournaments/'+id).remove().then(()=>toast('🗑️ Deleted'));
+}
+function setTourStatus(id,status){
+  db.ref('tournaments/'+id+'/status').set(status).then(()=>toast('✅ Status: '+status));
+}
+
+// ===== JOINED USERS =====
+function loadJoinedUsers(){
+  const tid=document.getElementById('jt-filter').value;
+  const tb=document.getElementById('joined-list');
+  if(!tid){tb.innerHTML=`<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px;">Tournament select karo</td></tr>`;return;}
+  db.ref('joinedTournaments').on('value', s=>{
+    allJoinedData=[];
+    s.forEach(uNode=>{
+      uNode.forEach(tNode=>{
+        if(tNode.key===tid){
+          allJoinedData.push({uid:uNode.key,jid:tNode.key,...tNode.val()});
+        }
+      });
+    });
+    if(!allJoinedData.length){tb.innerHTML=`<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:20px;">Koi user join nahi kiya</td></tr>`;return;}
+    tb.innerHTML=allJoinedData.map(j=>`<tr>
+      <td style="font-size:0.85rem;font-weight:600;">${j.uid.substring(0,10)}...</td>
+      <td>${j.tournamentName||'-'}</td>
+      <td style="color:var(--red);font-weight:700;">₹${j.entryFee||0}</td>
+      <td style="font-size:0.72rem;">${new Date(j.joinedAt).toLocaleString('hi-IN')}</td>
+      <td>${j.prizeGiven?`<span style="color:var(--green);font-weight:700;">₹${j.prizeGiven}</span>`:'—'}</td>
+      <td>
+        <button class="btn-gold-sm" onclick="openGivePrize('${j.uid}','${j.jid}','${j.tournamentName||''}')">🏆 Prize Do</button>
+      </td></tr>`).join('');
+  });
+}
+function openGivePrize(uid,jid,tname){
+  document.getElementById('gp-uid').value=uid;
+  document.getElementById('gp-jid').value=jid;
+  document.getElementById('gp-user-name').textContent='UID: '+uid;
+  document.getElementById('gp-tournament-name').textContent=tname;
+  document.getElementById('gp-amount').value='';
+  document.getElementById('gp-note').value='';
+  openModal('modal-give-prize');
+}
+function givePrize(){
+  const uid=document.getElementById('gp-uid').value;
+  const jid=document.getElementById('gp-jid').value;
+  const amt=parseFloat(document.getElementById('gp-amount').value)||0;
+  const note=document.getElementById('gp-note').value.trim()||'Tournament Prize';
+  if(!amt||amt<=0) return toast('Prize amount daalo');
+  db.ref('users/'+uid+'/balance').transaction(b=>(parseFloat(b)||0)+amt);
+  db.ref('joinedTournaments/'+uid+'/'+jid+'/prizeGiven').set(amt);
+  db.ref('tournamentTransactions').push({userId:uid,type:'prize',amount:amt,note,timestamp:Date.now()});
+  toast('✅ ₹'+amt+' prize de diya!');
+  closeModal('modal-give-prize');
+}
+
+// ===== USERS =====
+let allUsersArr=[];
+function loadUsers(){
+  db.ref('users').on('value', s=>{
+    allUsersArr=[];
+    if(s.exists()) s.forEach(u=>allUsersArr.push({id:u.key,...u.val()}));
+    renderUsers(allUsersArr);
+  });
+}
+function filterUsers(){
+  const q=document.getElementById('user-search').value.toLowerCase();
+  renderUsers(allUsersArr.filter(u=>(u.name||'').toLowerCase().includes(q)||(u.email||'').toLowerCase().includes(q)));
+}
+function renderUsers(arr){
+  const tb=document.getElementById('users-list');
+  if(!arr.length){tb.innerHTML=`<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:20px;">Koi user nahi</td></tr>`;return;}
+  tb.innerHTML=arr.map(u=>`<tr>
+    <td>
+      <div style="font-size:0.88rem;font-weight:700;color:#fff;">${u.name||'—'}</div>
+      <div style="font-size:0.75rem;color:#00B4FF;margin-top:2px;">${u.email||'—'}</div>
+      <div style="font-size:0.65rem;color:var(--text3);margin-top:1px;font-family:monospace;">${u.id?u.id.substring(0,16)+'...':''}</div>
+    </td>
+    <td style="color:var(--gold);font-weight:800;font-size:0.95rem;">₹${parseFloat(u.balance||0).toFixed(2)}</td>
+    <td style="font-size:0.72rem;color:var(--text2);">${u.createdAt?new Date(u.createdAt).toLocaleDateString('hi-IN'):'—'}</td>
+    <td>
+      <button class="btn-gold-sm" onclick="openUserModal('${u.id}')" style="display:block;margin-bottom:4px;width:100%;">👁️ Details</button>
+      <button class="btn-green" onclick="quickAddBalance('${u.id}')" style="display:block;width:100%;">+ Balance</button>
+    </td>
+  </tr>`).join('');
+}
+
+function quickAddBalance(uid){
+  const amt = prompt('Kitna balance add karna hai? (₹)');
+  if(!amt || isNaN(amt) || parseFloat(amt)<=0) return;
+  db.ref('users/'+uid+'/balance').transaction(b=>(parseFloat(b)||0)+parseFloat(amt)).then(()=>toast('✅ ₹'+amt+' add ho gaya!'));
+}
+function openUserModal(uid){
+  selectedUserId=uid;
+  const u=allUsersArr.find(x=>x.id===uid)||{};
+  document.getElementById('user-detail-content').innerHTML=`
+    <div style="background:var(--bg3);border-radius:14px;padding:16px;margin-bottom:4px;">
+      <div style="font-size:1rem;font-weight:800;color:#fff;margin-bottom:6px;">${u.name||'—'}</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+        <span style="font-size:0.65rem;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Email:</span>
+        <span style="font-size:0.82rem;color:#00B4FF;font-weight:600;">${u.email||'—'}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;">
+        <span style="font-size:0.65rem;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">UID:</span>
+        <span style="font-size:0.72rem;color:var(--text2);font-family:monospace;">${u.id||'—'}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+        <div style="background:var(--card);border-radius:10px;padding:10px;text-align:center;">
+          <div style="font-size:0.6rem;color:var(--text3);margin-bottom:3px;">BALANCE</div>
+          <div style="font-size:1.2rem;font-weight:800;color:var(--gold);">₹${parseFloat(u.balance||0).toFixed(2)}</div>
+        </div>
+        <div style="background:var(--card);border-radius:10px;padding:10px;text-align:center;">
+          <div style="font-size:0.6rem;color:var(--text3);margin-bottom:3px;">JOINED</div>
+          <div style="font-size:0.75rem;font-weight:700;">${u.createdAt?new Date(u.createdAt).toLocaleDateString('hi-IN'):'—'}</div>
+        </div>
+        <div style="background:var(--card);border-radius:10px;padding:10px;text-align:center;">
+          <div style="font-size:0.6rem;color:var(--text3);margin-bottom:3px;">STATUS</div>
+          <div style="font-size:0.75rem;font-weight:700;color:#00E676;">Active ✅</div>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('manual-balance').value='';
+  document.getElementById('add-balance').value='';
+  openModal('modal-user');
+}
+function setUserBalance(){
+  const amt=parseFloat(document.getElementById('manual-balance').value);
+  if(isNaN(amt)) return toast('Amount daalo');
+  db.ref('users/'+selectedUserId+'/balance').set(amt).then(()=>toast('✅ Balance set: ₹'+amt));
+}
+function addUserBalance(){
+  const amt=parseFloat(document.getElementById('add-balance').value)||0;
+  if(!amt||amt<=0) return toast('Amount daalo');
+  db.ref('users/'+selectedUserId+'/balance').transaction(b=>(parseFloat(b)||0)+amt).then(()=>toast('✅ ₹'+amt+' add ho gaya'));
+}
+
+// ===== BANNERS =====
+function loadBanners(){
+  db.ref('banners').on('value', s=>{
+    const wrap=document.getElementById('banners-list');
+    if(!s.exists()){wrap.innerHTML='<div style="color:var(--text3);font-size:0.85rem;">Koi banner nahi</div>';return;}
+    wrap.innerHTML='';
+    s.forEach(b=>{
+      const d=b.val(); const id=b.key;
+      const div=document.createElement('div');
+      div.style.cssText='background:var(--bg3);border-radius:14px;overflow:hidden;border:1px solid var(--border);';
+      div.innerHTML=`
+        ${d.image?`<img src="${d.image}" style="width:100%;height:130px;object-fit:cover;" alt="">`:`<div style="height:130px;display:flex;align-items:center;justify-content:center;font-size:2rem;opacity:0.3;">🖼️</div>`}
+        <div style="padding:10px;">
+          ${d.link?`<div style="font-size:0.72rem;color:var(--blue);margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">🔗 ${d.link}</div>`:''}
+          <div style="display:flex;gap:6px;">
+            <button class="btn-red" onclick="deleteBanner('${id}')" style="flex:1;">🗑️ Delete</button>
+            <button class="btn-gold-sm" onclick="toggleBanner('${id}',${d.active!==false})" style="flex:1;">${d.active!==false?'⏸ Hide':'▶ Show'}</button>
+          </div>
+        </div>`;
+      wrap.appendChild(div);
+    });
+  });
+}
+function saveBanner(){
+  const img=document.getElementById('b-img').value.trim();
+  const link=document.getElementById('b-link').value.trim();
+  const order=parseInt(document.getElementById('b-order').value)||1;
+  if(!img) return toast('Image URL daalo');
+  db.ref('banners').push({image:img,link:link||'',order,active:true,createdAt:Date.now()})
+    .then(()=>{toast('✅ Banner add ho gaya');closeModal('modal-banner');document.getElementById('b-img').value='';document.getElementById('b-link').value='';});
+}
+function deleteBanner(id){if(!confirm('Delete?'))return;db.ref('banners/'+id).remove().then(()=>toast('🗑️ Deleted'));}
+function toggleBanner(id,wasActive){db.ref('banners/'+id+'/active').set(!wasActive).then(()=>toast('✅ Updated'));}
+
+// ===== NOTIFICATIONS =====
+function loadNotifications(){
+  db.ref('notifications').on('value', s=>{
+    const tb=document.getElementById('notif-list');
+    if(!s.exists()){tb.innerHTML=`<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:20px;">Koi notification nahi</td></tr>`;return;}
+    const arr=[]; s.forEach(n=>arr.unshift({id:n.key,...n.val()}));
+    tb.innerHTML=arr.map(n=>`<tr>
+      <td style="font-weight:600;">${n.title||'—'}</td>
+      <td style="font-size:0.78rem;color:var(--text2);max-width:200px;">${n.body||'—'}</td>
+      <td style="font-size:0.72rem;">${n.timestamp?new Date(n.timestamp).toLocaleString('hi-IN'):'—'}</td>
+      <td><span class="badge ${n.active!==false?'b-complete':'b-rejected'}">${n.active!==false?'Active':'Hidden'}</span></td>
+      <td style="display:flex;gap:6px;">
+        <button class="btn-red" onclick="deleteNotif('${n.id}')">🗑️</button>
+        <button class="btn-gold-sm" onclick="toggleNotif('${n.id}',${n.active!==false})">${n.active!==false?'Hide':'Show'}</button>
+      </td></tr>`).join('');
+  });
+}
+function saveNotification(){
+  const title=document.getElementById('n-title').value.trim();
+  const body=document.getElementById('n-body').value.trim();
+  if(!title||!body) return toast('Title aur message daalo');
+  db.ref('notifications').push({title,body,active:true,timestamp:Date.now()})
+    .then(()=>{toast('✅ Notification send ho gayi');closeModal('modal-notif');document.getElementById('n-title').value='';document.getElementById('n-body').value='';});
+}
+function deleteNotif(id){if(!confirm('Delete?'))return;db.ref('notifications/'+id).remove().then(()=>toast('🗑️ Deleted'));}
+function toggleNotif(id,wasActive){db.ref('notifications/'+id+'/active').set(!wasActive).then(()=>toast('✅ Updated'));}
+
+// ===== SETTINGS =====
+function loadSettings(){
+  db.ref('appSettings').on('value', s=>{
+    if(!s.exists()) return;
+    const d=s.val();
+    document.getElementById('set-appname').value=d.appName||'';
+    document.getElementById('set-version').value=d.appVersion||'';
+    document.getElementById('set-logo').value=d.logoUrl||'';
+    if(d.logoUrl){document.getElementById('prev-logo').src=d.logoUrl;document.getElementById('prev-logo').style.display='block';}
+    document.getElementById('set-tagline').value=d.tagline||'';
+    document.getElementById('set-qr').value=d.depositQr||'';
+    if(d.depositQr){document.getElementById('prev-qr').src=d.depositQr;document.getElementById('prev-qr').style.display='block';}
+    document.getElementById('set-upiid').value=d.upiId||'';
+    document.getElementById('set-depamts').value=(d.depositAmounts||[]).join(',');
+    document.getElementById('set-witamts').value=(d.withdrawAmounts||[]).join(',');
+    document.getElementById('set-upi-img').value=d.upiImageUrl||'';
+    if(d.upiImageUrl){document.getElementById('prev-upi-img').src=d.upiImageUrl;document.getElementById('prev-upi-img').style.display='block';}
+    document.getElementById('set-bank-img').value=d.bankImageUrl||'';
+    if(d.bankImageUrl){document.getElementById('prev-bank-img').src=d.bankImageUrl;document.getElementById('prev-bank-img').style.display='block';}
+    document.getElementById('set-whatsapp').value=d.whatsappLink||'';
+    document.getElementById('set-telegram').value=d.
